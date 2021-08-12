@@ -1,0 +1,47 @@
+{
+    "name": "@mangosteen/got-to-temp",
+    "version": "1.0.0",
+    "description": "Download HTTP streams to temp files.",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "engines": {
+        "node": ">=12"
+    },
+    "scripts": {
+        "build": "tsc",
+        "test-publish-npm": "npm pack",
+        "publish-npm": "npm publish --access public",
+        "prepare": "tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/paya-cz/got-to-temp.git"
+    },
+    "keywords": [
+        "got",
+        "temp",
+        "stream",
+        "http",
+        "transform",
+        "download",
+        "request",
+        "temporary",
+        "file",
+        "retry"
+    ],
+    "author": "Paya",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/paya-cz/got-to-temp/issues"
+    },
+    "homepage": "https://github.com/paya-cz/got-to-temp#readme",
+    "devDependencies": {
+        "@tsconfig/node12": "^1.0.9",
+        "@types/node": "^12.20.19",
+        "@types/temp": "^0.9.1",
+        "typescript": "^4.3.5"
+    },
+    "dependencies": {
+        "temp": "^0.9.4"
+    }
+}
