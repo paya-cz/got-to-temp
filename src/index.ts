@@ -4,7 +4,6 @@ import temp from 'temp';
 import { promisify } from 'util';
 
 const pipeline = promisify(stream.pipeline);
-const finished = promisify(stream.finished);
 const unlink = promisify(fs.unlink);
 
 export interface GotRequest extends NodeJS.ReadableStream {
@@ -63,17 +62,6 @@ export async function downloadToTempFile<T extends ReadonlyArray<NodeJS.ReadWrit
             pipelineError = error;
         }
 
-        // Wait until the streams finish cleanup
-        // This will make sure the file handles are closed before we attempt to clean
-        // up the temp file
-        try {
-            await Promise.all(
-                streams.map(s => finished(s)),
-            );
-        } catch (error) {
-            pipelineError ??= error;
-        }
-
         // Check if Got asked for a retry
         ({ retryCount } = await downloadFinished);
 
@@ -96,7 +84,8 @@ export async function downloadToTempFile<T extends ReadonlyArray<NodeJS.ReadWrit
 }
 
 function watchGotStreamRetry(gotStream: GotRequest, retryCount = 0): {
-    stream: NodeJS.ReadableStream,
+    stream: GotRequest,
+    /** Resolves into a `retry` value from `got`. Never rejects. */
     finished: Promise<{
         retryCount: number | undefined,
     }>,
@@ -109,7 +98,7 @@ function watchGotStreamRetry(gotStream: GotRequest, retryCount = 0): {
             // If "retry" is called, it is called before "close"
             function onRetry(retryCount: number): void {
                 resolve({
-                    retryCount: retryCount ?? undefined,
+                    retryCount,
                 });
             }
 
