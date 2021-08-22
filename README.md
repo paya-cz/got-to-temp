@@ -19,9 +19,9 @@ With [npm](https://www.npmjs.com/) do:
 
 # Usage
 
-```js
+```ts
 import { downloadToTempFile } from '@mangosteen/got-to-temp';
-import { createDigestStream } from '@mangosteen/digest-stream';
+import { DigestStream } from '@mangosteen/digest-stream';
 import got from 'got';
 import crypto from 'crypto';
 
@@ -42,7 +42,9 @@ import crypto from 'crypto';
             // We use digest as an example here to show how to compute SHA-256 while
             // the file is being downloaded. You may use any other transform streams,
             // or simply avoid passing this factory method altogether.
-            createDigestStream(crypto.createHash('sha256')),
+            new DigestStream({
+                digest: crypto.createHash('sha256'),
+            }),
         ] as const,
     );
 
