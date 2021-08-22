@@ -11,22 +11,22 @@ export interface GotRequest extends NodeJS.ReadableStream {
 }
 
 export async function downloadToTempFile(
-    createStreamRequest: () => GotRequest,
+    createStreamRequest: () => GotRequest | Promise<GotRequest>,
 ): Promise<{
     filePath: string;
 }>;
 
 export async function downloadToTempFile<T extends ReadonlyArray<NodeJS.ReadWriteStream>>(
-    createStreamRequest: () => GotRequest,
-    createTransforms: () => T,
+    createStreamRequest: () => GotRequest | Promise<GotRequest>,
+    createTransforms: () => T | Promise<T>,
 ): Promise<{
     filePath: string,
     transforms: T,
 }>;
 
 export async function downloadToTempFile<T extends ReadonlyArray<NodeJS.ReadWriteStream>>(
-    createStreamRequest: () => GotRequest,
-    createTransforms?: () => T,
+    createStreamRequest: () => GotRequest | Promise<GotRequest>,
+    createTransforms?: () => T | Promise<T>,
 ): Promise<{
     filePath: string,
     transforms?: T,
@@ -35,11 +35,11 @@ export async function downloadToTempFile<T extends ReadonlyArray<NodeJS.ReadWrit
     
     while (true) {
         // Prepare transform streams
-        const transforms = createTransforms?.();
+        const transforms = await createTransforms?.();
 
         // Download stream
         const { stream: downloadStream, finished: downloadFinished } = watchGotStreamRetry(
-            createStreamRequest(),
+            await createStreamRequest(),
             retryCount,
         );
 
